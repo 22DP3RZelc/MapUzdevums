@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="functions.js"></script>
+    <style>#map { height: 100vh; }</style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        const map = L.map('map').setView([56.9496, 24.1052], 8);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19}).addTo(map);
+        fetch('geomap.json')
+            .then(res => res.json())
+            .then(data => data.features.forEach(f => {
+                const [lat, lng] = LKS92WGS84.convertXYToLatLon(f.geometry.coordinates);
+                L.marker([lat, lng]).addTo(map).bindPopup(`<b>${f.properties.PLACENAME}</b>`);
+            }))
+            .catch(console.error);
+    </script>
+</body>
+</html>
